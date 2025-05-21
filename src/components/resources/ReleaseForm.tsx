@@ -1,48 +1,44 @@
 'use client';
 
 import { useState } from 'react';
-import { FiX, FiSave } from 'react-icons/fi';
+import { FiX, FiCheck } from 'react-icons/fi';
 import { useResource } from '@/contexts/ResourceContext';
 
-interface AllocationFormProps {
+interface ReleaseFormProps {
   resource: any;
   currentAllocation: any;
   onClose: () => void;
 }
 
-export default function AllocationForm({ 
+export default function ReleaseForm({ 
   resource, 
   currentAllocation, 
   onClose 
-}: AllocationFormProps) {
-  // Default to 1 for additional amount
-  const [additionalAmount, setAdditionalAmount] = useState('1');
+}: ReleaseFormProps) {
+  const [releaseAmount, setReleaseAmount] = useState('1');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
   const { allocateResource } = useResource();
   
-  const isAllocated = !!currentAllocation;
-  const currentAmount = currentAllocation?.amount || 0;
-  const maxAvailable = resource.remainingAmount;
-  
+  // Calculate new amount after release
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!additionalAmount) {
-      setError('请填写占用数量');
+    if (!releaseAmount) {
+      setError('请填写释放数量');
       return;
     }
     
-    const amountToAdd = parseInt(additionalAmount, 10);
+    const amountToRelease = parseInt(releaseAmount, 10);
     
-    if (isNaN(amountToAdd) || amountToAdd <= 0) {
-      setError('占用数量必须是正整数');
+    if (isNaN(amountToRelease) || amountToRelease <= 0) {
+      setError('释放数量必须是正整数');
       return;
     }
     
-    if (amountToAdd > maxAvailable) {
-      setError(`可用资源数量不足，最大可占用数量为 ${maxAvailable}`);
+    if (amountToRelease > currentAllocation.amount) {
+      setError(`释放数量不能超过当前占用量 ${currentAllocation.amount}`);
       return;
     }
     
@@ -50,13 +46,14 @@ export default function AllocationForm({
       setLoading(true);
       setError('');
       
-      // Calculate new total allocation
-      const newTotal = currentAmount + amountToAdd;
+      // Calculate new allocation amount
+      const newAmount = currentAllocation.amount - amountToRelease;
       
-      await allocateResource(resource.id, newTotal);
+      // Update allocation with new amount
+      await allocateResource(resource.id, newAmount);
       onClose();
     } catch (error: any) {
-      console.error('资源分配错误:', error);
+      console.error('资源释放错误:', error);
       setError(error.message || '操作失败');
     } finally {
       setLoading(false);
@@ -67,7 +64,7 @@ export default function AllocationForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
         <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-lg font-medium">资源占用</h3>
+          <h3 className="text-lg font-medium">资源释放</h3>
           <button 
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
@@ -82,11 +79,9 @@ export default function AllocationForm({
             <p className="text-sm text-blue-600">
               可用数量: <span className="font-medium">{resource.remainingAmount}</span> / {resource.totalAmount}
             </p>
-            {isAllocated && (
-              <p className="text-sm text-blue-600 mt-1">
-                您当前占用: <span className="font-medium">{currentAllocation.amount}</span>
-              </p>
-            )}
+            <p className="text-sm text-blue-600 mt-1">
+              您当前占用: <span className="font-medium">{currentAllocation.amount}</span>
+            </p>
           </div>
           
           {error && (
@@ -97,22 +92,22 @@ export default function AllocationForm({
           
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2" htmlFor="additionalAmount">
-                新增占用数量
+              <label className="block text-gray-700 mb-2" htmlFor="releaseAmount">
+                释放数量
               </label>
               <input
-                id="additionalAmount"
+                id="releaseAmount"
                 type="number"
-                value={additionalAmount}
-                onChange={(e) => setAdditionalAmount(e.target.value)}
+                value={releaseAmount}
+                onChange={(e) => setReleaseAmount(e.target.value)}
                 className="w-full py-2 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="请输入占用数量"
+                placeholder="请输入释放数量"
                 min="1"
-                max={maxAvailable}
+                max={currentAllocation.amount}
                 disabled={loading}
               />
               <p className="mt-1 text-xs text-gray-500">
-                输入要新增的占用数量，不能超过可用资源数
+                释放数量不能超过当前占用量
               </p>
             </div>
             
@@ -127,12 +122,12 @@ export default function AllocationForm({
               </button>
               <button
                 type="submit"
-                className="flex items-center gap-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition duration-200"
+                className="flex items-center gap-2 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-md transition duration-200"
                 disabled={loading}
               >
-                {loading ? '保存中...' : (
+                {loading ? '释放中...' : (
                   <>
-                    <FiSave size={16} /> 保存
+                    <FiCheck size={16} /> 释放
                   </>
                 )}
               </button>

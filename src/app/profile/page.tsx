@@ -11,6 +11,9 @@ export default function ProfilePage() {
   const { allocations, loading, releaseResource } = useResource();
   const router = useRouter();
   
+  // Filter out allocations with amount 0
+  const validAllocations = allocations.filter(allocation => allocation.amount > 0);
+  
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
@@ -54,13 +57,13 @@ export default function ProfilePage() {
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-bold mb-4">我的资源</h2>
         
-        {allocations.length === 0 ? (
+        {validAllocations.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             您还没有占用任何资源
           </div>
         ) : (
           <div className="grid gap-4">
-            {allocations.map((allocation) => (
+            {validAllocations.map((allocation) => (
               <div 
                 key={allocation.id} 
                 className="border border-gray-200 rounded-lg p-4 flex justify-between items-center"

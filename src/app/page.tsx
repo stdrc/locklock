@@ -4,13 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FiPlus, FiEdit2, FiTrash2, FiLink, FiUnlink, 
+  FiPlus, FiEdit2, FiTrash2, FiLink, 
   FiAlertCircle, FiCheckCircle, FiUser
 } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useResource } from '@/contexts/ResourceContext';
 import ResourceForm from '@/components/resources/ResourceForm';
 import AllocationForm from '@/components/resources/AllocationForm';
+import ReleaseForm from '@/components/resources/ReleaseForm';
 
 export default function HomePage() {
   const { user, status } = useAuth();
@@ -18,8 +19,10 @@ export default function HomePage() {
   
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
   const [isAllocationModalOpen, setIsAllocationModalOpen] = useState(false);
+  const [isReleaseModalOpen, setIsReleaseModalOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<any>(null);
   const [allocatingResource, setAllocatingResource] = useState<any>(null);
+  const [releasingResource, setReleasingResource] = useState<any>(null);
   
   const handleOpenResourceModal = (resource: any = null) => {
     setEditingResource(resource);
@@ -39,6 +42,16 @@ export default function HomePage() {
   const handleCloseAllocationModal = () => {
     setIsAllocationModalOpen(false);
     setAllocatingResource(null);
+  };
+  
+  const handleOpenReleaseModal = (resource: any) => {
+    setReleasingResource(resource);
+    setIsReleaseModalOpen(true);
+  };
+  
+  const handleCloseReleaseModal = () => {
+    setIsReleaseModalOpen(false);
+    setReleasingResource(null);
   };
   
   const handleDeleteResource = async (id: string) => {
@@ -122,7 +135,7 @@ export default function HomePage() {
           <AnimatePresence>
             {resources.map((resource) => {
               const userAllocation = findUserAllocation(resource.id);
-              const isAllocated = !!userAllocation;
+              const isAllocated = !!userAllocation && userAllocation.amount > 0;
               
               // Calculate the percentage of used resources
               const usagePercentage = Math.min(
@@ -196,25 +209,27 @@ export default function HomePage() {
                           <div className="text-sm text-gray-500">您尚未占用此资源</div>
                         )}
                         
-                        <button
-                          onClick={() => handleOpenAllocationModal(resource)}
-                          className={`flex items-center gap-1 py-1.5 px-3 rounded-md text-sm ${
-                            isAllocated
-                              ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                              : 'bg-blue-500 hover:bg-blue-600 text-white'
-                          }`}
-                          disabled={loading || (resource.remainingAmount === 0 && !isAllocated)}
-                        >
-                          {isAllocated ? (
-                            <>
-                              <FiEdit2 size={14} /> 调整
-                            </>
-                          ) : (
-                            <>
+                        <div className="flex gap-2">
+                          {resource.remainingAmount > 0 && (
+                            <button
+                              onClick={() => handleOpenAllocationModal(resource)}
+                              className="flex items-center gap-1 py-1.5 px-3 rounded-md text-sm bg-blue-500 hover:bg-blue-600 text-white"
+                              disabled={loading}
+                            >
                               <FiLink size={14} /> 占用
-                            </>
+                            </button>
                           )}
-                        </button>
+                          
+                          {isAllocated && (
+                            <button
+                              onClick={() => handleOpenReleaseModal(resource)}
+                              className="flex items-center gap-1 py-1.5 px-3 rounded-md text-sm bg-red-100 hover:bg-red-200 text-red-700"
+                              disabled={loading}
+                            >
+                              <FiTrash2 size={14} /> 释放
+                            </button>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -239,6 +254,15 @@ export default function HomePage() {
           resource={allocatingResource}
           onClose={handleCloseAllocationModal}
           currentAllocation={findUserAllocation(allocatingResource.id)}
+        />
+      )}
+      
+      {/* Release Modal */}
+      {isReleaseModalOpen && releasingResource && (
+        <ReleaseForm
+          resource={releasingResource}
+          onClose={handleCloseReleaseModal}
+          currentAllocation={findUserAllocation(releasingResource.id)}
         />
       )}
     </div>
