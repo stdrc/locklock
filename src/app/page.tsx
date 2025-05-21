@@ -1,103 +1,246 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FiPlus, FiEdit2, FiTrash2, FiLink, FiUnlink, 
+  FiAlertCircle, FiCheckCircle, FiUser
+} from 'react-icons/fi';
+import { useAuth } from '@/contexts/AuthContext';
+import { useResource } from '@/contexts/ResourceContext';
+import ResourceForm from '@/components/resources/ResourceForm';
+import AllocationForm from '@/components/resources/AllocationForm';
+
+export default function HomePage() {
+  const { user, status } = useAuth();
+  const { resources, allocations, loading, deleteResource } = useResource();
+  
+  const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
+  const [isAllocationModalOpen, setIsAllocationModalOpen] = useState(false);
+  const [editingResource, setEditingResource] = useState<any>(null);
+  const [allocatingResource, setAllocatingResource] = useState<any>(null);
+  
+  const handleOpenResourceModal = (resource: any = null) => {
+    setEditingResource(resource);
+    setIsResourceModalOpen(true);
+  };
+  
+  const handleCloseResourceModal = () => {
+    setIsResourceModalOpen(false);
+    setEditingResource(null);
+  };
+  
+  const handleOpenAllocationModal = (resource: any) => {
+    setAllocatingResource(resource);
+    setIsAllocationModalOpen(true);
+  };
+  
+  const handleCloseAllocationModal = () => {
+    setIsAllocationModalOpen(false);
+    setAllocatingResource(null);
+  };
+  
+  const handleDeleteResource = async (id: string) => {
+    if (confirm('确定要删除此资源吗？')) {
+      try {
+        await deleteResource(id);
+      } catch (error) {
+        console.error('删除资源错误:', error);
+      }
+    }
+  };
+  
+  // Find user allocation for a specific resource
+  const findUserAllocation = (resourceId: string) => {
+    return allocations.find(allocation => allocation.resourceId === resourceId);
+  };
+  
+  // Check if all authenticated
+  const isAuthenticated = status === 'authenticated';
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div>
+      {/* Resources Section */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">资源管理</h1>
+        
+        {isAuthenticated && (
+          <button
+            onClick={() => handleOpenResourceModal()}
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-200"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <FiPlus /> 添加资源
+          </button>
+        )}
+      </div>
+      
+      {/* Loading state */}
+      {loading && (
+        <div className="flex justify-center my-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+      
+      {/* Authentication required message */}
+      {!isAuthenticated && !loading && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center my-8">
+          <FiUser className="mx-auto mb-3 text-blue-500" size={36} />
+          <h3 className="text-xl font-medium text-blue-800 mb-2">需要登录</h3>
+          <p className="text-blue-600 mb-4">
+            请登录或注册账号以管理和分配资源
+          </p>
+          <div className="flex justify-center gap-4">
+            <Link
+              href="/login"
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md transition duration-200"
+            >
+              登录
+            </Link>
+            <Link
+              href="/register"
+              className="bg-white hover:bg-gray-50 text-blue-500 border border-blue-500 py-2 px-6 rounded-md transition duration-200"
+            >
+              注册
+            </Link>
+          </div>
+        </div>
+      )}
+      
+      {/* Resources List */}
+      {!loading && resources.length === 0 && isAuthenticated && (
+        <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-xl font-medium text-gray-700 mb-2">暂无资源</h3>
+          <p className="text-gray-500 mb-4">
+            点击"添加资源"按钮开始创建资源
+          </p>
+        </div>
+      )}
+      
+      {resources.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence>
+            {resources.map((resource) => {
+              const userAllocation = findUserAllocation(resource.id);
+              const isAllocated = !!userAllocation;
+              
+              // Calculate the percentage of used resources
+              const usagePercentage = Math.min(
+                100,
+                Math.round(((resource.totalAmount - resource.remainingAmount) / resource.totalAmount) * 100)
+              );
+              
+              return (
+                <motion.div
+                  key={resource.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden"
+                >
+                  <div className="p-5">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-lg font-bold">{resource.name}</h3>
+                      
+                      {isAuthenticated && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleOpenResourceModal(resource)}
+                            className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                          >
+                            <FiEdit2 size={16} />
+                          </button>
+                          
+                          <button
+                            onClick={() => handleDeleteResource(resource.id)}
+                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                            disabled={loading}
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-600">
+                          可用: {resource.remainingAmount} / {resource.totalAmount}
+                        </span>
+                        <span className={resource.remainingAmount === 0 ? 'text-red-500' : 'text-green-500'}>
+                          {resource.remainingAmount === 0 
+                            ? <FiAlertCircle className="inline mr-1" /> 
+                            : <FiCheckCircle className="inline mr-1" />
+                          }
+                          {resource.remainingAmount === 0 ? '已用尽' : '可用'}
+                        </span>
+                      </div>
+                      
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div 
+                          className={`h-2.5 rounded-full ${usagePercentage >= 90 ? 'bg-red-500' : 'bg-blue-500'}`}
+                          style={{ width: `${usagePercentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    {isAuthenticated && (
+                      <div className="flex justify-between items-center">
+                        {isAllocated ? (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <span>
+                              您已占用: <span className="font-medium text-blue-600">{userAllocation.amount}</span>
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-500">您尚未占用此资源</div>
+                        )}
+                        
+                        <button
+                          onClick={() => handleOpenAllocationModal(resource)}
+                          className={`flex items-center gap-1 py-1.5 px-3 rounded-md text-sm ${
+                            isAllocated
+                              ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                              : 'bg-blue-500 hover:bg-blue-600 text-white'
+                          }`}
+                          disabled={loading || (resource.remainingAmount === 0 && !isAllocated)}
+                        >
+                          {isAllocated ? (
+                            <>
+                              <FiEdit2 size={14} /> 调整
+                            </>
+                          ) : (
+                            <>
+                              <FiLink size={14} /> 占用
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      )}
+      
+      {/* Resource Modal */}
+      {isResourceModalOpen && (
+        <ResourceForm
+          resource={editingResource}
+          onClose={handleCloseResourceModal}
+        />
+      )}
+      
+      {/* Allocation Modal */}
+      {isAllocationModalOpen && allocatingResource && (
+        <AllocationForm
+          resource={allocatingResource}
+          onClose={handleCloseAllocationModal}
+          currentAllocation={findUserAllocation(allocatingResource.id)}
+        />
+      )}
     </div>
   );
 }
