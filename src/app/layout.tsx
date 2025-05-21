@@ -9,7 +9,7 @@ import Navbar from '@/components/layout/Navbar';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '资源分配系统',
+  title: 'LockLock',
   description: '一个用于分配和管理资源的应用',
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
                   {children}
                 </main>
                 <footer className="py-4 text-center text-sm text-gray-500 bg-gray-50">
-                  资源分配系统 &copy; {new Date().getFullYear()}
+                  LockLock &copy; {new Date().getFullYear()}
                 </footer>
               </div>
             </ResourceProvider>

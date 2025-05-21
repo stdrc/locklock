@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link href="/" className="text-xl font-bold text-blue-600 flex items-center gap-2">
-            <FiBox className="inline" /> 资源分配系统
+            <FiBox className="inline" />LockLock
           </Link>
           
           <div className="flex items-center space-x-6">

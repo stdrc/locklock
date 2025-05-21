@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FiPlus, FiEdit2, FiTrash2, FiLink, 
+  FiPlus, FiEdit2, FiTrash2, FiLink, FiLock, FiUnlock,
   FiAlertCircle, FiCheckCircle, FiUser
 } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
@@ -216,7 +216,7 @@ export default function HomePage() {
                               className="flex items-center gap-1 py-1.5 px-3 rounded-md text-sm bg-blue-500 hover:bg-blue-600 text-white"
                               disabled={loading}
                             >
-                              <FiLink size={14} /> 占用
+                              <FiLock size={14} /> 占用
                             </button>
                           )}
                           
@@ -226,7 +226,7 @@ export default function HomePage() {
                               className="flex items-center gap-1 py-1.5 px-3 rounded-md text-sm bg-red-100 hover:bg-red-200 text-red-700"
                               disabled={loading}
                             >
-                              <FiTrash2 size={14} /> 释放
+                              <FiUnlock size={14} /> 释放
                             </button>
                           )}
                         </div>
