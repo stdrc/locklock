@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FiX, FiSave } from 'react-icons/fi';
+import { FiX, FiLock } from 'react-icons/fi';
 import { useResource } from '@/contexts/ResourceContext';
 
 interface AllocationFormProps {
@@ -132,7 +132,7 @@ export default function AllocationForm({
               >
                 {loading ? '保存中...' : (
                   <>
-                    <FiSave size={16} /> 保存
+                    <FiLock size={16} /> 占用
                   </>
                 )}
               </button>

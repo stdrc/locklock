@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FiX, FiCheck } from 'react-icons/fi';
+import { FiX, FiUnlock } from 'react-icons/fi';
 import { useResource } from '@/contexts/ResourceContext';
 
 interface ReleaseFormProps {
@@ -127,7 +127,7 @@ export default function ReleaseForm({
               >
                 {loading ? '释放中...' : (
                   <>
-                    <FiCheck size={16} /> 释放
+                    <FiUnlock size={16} /> 释放
                   </>
                 )}
               </button>
