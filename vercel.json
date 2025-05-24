@@ -4,6 +4,6 @@
             "ENABLE_EXPERIMENTAL_COREPACK": "1"
         }
     },
-    "installCommand": "npm ci && npm run postinstall",
-    "buildCommand": "npm run vercel-build"
+    "installCommand": "npm run prisma:migrate:deploy",
+    "buildCommand": "npm run build"
 }
