@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import { hash } from "bcryptjs";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/db';
+import { hash } from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
@@ -8,7 +8,7 @@ export async function POST(request: Request) {
 
     // Validate input
     if (!email || !password) {
-      return NextResponse.json({ error: "邮箱和密码不能为空" }, { status: 400 });
+      return NextResponse.json({ error: '邮箱和密码不能为空' }, { status: 400 });
     }
 
     // Check if user already exists
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: "该邮箱已注册" }, { status: 409 });
+      return NextResponse.json({ error: '该邮箱已注册' }, { status: 409 });
     }
 
     // Hash password
@@ -31,15 +31,9 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(
-      { message: "用户注册成功", userId: user.id },
-      { status: 201 }
-    );
+    return NextResponse.json({ message: '用户注册成功', userId: user.id }, { status: 201 });
   } catch (error) {
-    console.error("注册错误:", error);
-    return NextResponse.json(
-      { error: "注册时发生错误" },
-      { status: 500 }
-    );
+    console.error('注册错误:', error);
+    return NextResponse.json({ error: '注册时发生错误' }, { status: 500 });
   }
-} 
+}

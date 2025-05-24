@@ -14,7 +14,7 @@ interface AllocationFormProps {
 export default function AllocationForm({
   resource,
   currentAllocation,
-  onClose
+  onClose,
 }: AllocationFormProps) {
   // Default to 1 for additional amount
   const [additionalAmount, setAdditionalAmount] = useState('1');
@@ -81,7 +81,8 @@ export default function AllocationForm({
           <div className="mb-4 bg-blue-50 p-3 rounded-md">
             <h4 className="font-medium text-blue-700 mb-1">{resource.name}</h4>
             <p className="text-sm text-blue-600">
-              可用数量: <span className="font-medium">{resource.remainingAmount}</span> / {resource.totalAmount}
+              可用数量: <span className="font-medium">{resource.remainingAmount}</span> /{' '}
+              {resource.totalAmount}
             </p>
             {isAllocated && (
               <p className="text-sm text-blue-600 mt-1">
@@ -91,9 +92,7 @@ export default function AllocationForm({
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">
-              {error}
-            </div>
+            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">{error}</div>
           )}
 
           <form onSubmit={handleSubmit}>
@@ -105,16 +104,14 @@ export default function AllocationForm({
                 id="additionalAmount"
                 type="number"
                 value={additionalAmount}
-                onChange={(e) => setAdditionalAmount(e.target.value)}
+                onChange={e => setAdditionalAmount(e.target.value)}
                 className="w-full py-2 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="请输入占用数量"
                 min="1"
                 max={maxAvailable}
                 disabled={loading}
               />
-              <p className="mt-1 text-xs text-gray-500">
-                输入要新增的占用数量，不能超过可用资源数
-              </p>
+              <p className="mt-1 text-xs text-gray-500">输入要新增的占用数量，不能超过可用资源数</p>
             </div>
 
             <div className="flex justify-end gap-3">
@@ -131,7 +128,9 @@ export default function AllocationForm({
                 className="flex items-center gap-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition duration-200"
                 disabled={loading}
               >
-                {loading ? '保存中...' : (
+                {loading ? (
+                  '保存中...'
+                ) : (
                   <>
                     <FiLock size={16} /> 占用
                   </>

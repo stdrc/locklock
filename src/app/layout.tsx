@@ -14,11 +14,7 @@ export const metadata: Metadata = {
   description: '一个用于分配和管理资源的应用',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh">
       <body className={inter.className}>
@@ -28,9 +24,7 @@ export default function RootLayout({
               <ResourceProvider>
                 <div className="flex flex-col min-h-screen">
                   <Navbar />
-                  <main className="flex-grow container mx-auto px-4 py-8">
-                    {children}
-                  </main>
+                  <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
                   <footer className="py-4 text-center text-sm text-gray-500 bg-gray-50">
                     LockLock &copy; {new Date().getFullYear()}
                   </footer>

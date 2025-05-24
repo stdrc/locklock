@@ -8,7 +8,7 @@ export const authOptions = {
       name: 'Credentials',
       credentials: {
         email: { label: '邮箱', type: 'text' },
-        password: { label: '密码', type: 'password' }
+        password: { label: '密码', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {

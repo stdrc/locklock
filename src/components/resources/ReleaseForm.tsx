@@ -11,11 +11,7 @@ interface ReleaseFormProps {
   onClose: () => void;
 }
 
-export default function ReleaseForm({
-  resource,
-  currentAllocation,
-  onClose
-}: ReleaseFormProps) {
+export default function ReleaseForm({ resource, currentAllocation, onClose }: ReleaseFormProps) {
   const [releaseAmount, setReleaseAmount] = useState('1');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -78,7 +74,8 @@ export default function ReleaseForm({
           <div className="mb-4 bg-blue-50 p-3 rounded-md">
             <h4 className="font-medium text-blue-700 mb-1">{resource.name}</h4>
             <p className="text-sm text-blue-600">
-              可用数量: <span className="font-medium">{resource.remainingAmount}</span> / {resource.totalAmount}
+              可用数量: <span className="font-medium">{resource.remainingAmount}</span> /{' '}
+              {resource.totalAmount}
             </p>
             <p className="text-sm text-blue-600 mt-1">
               您当前占用: <span className="font-medium">{currentAllocation.amount}</span>
@@ -86,9 +83,7 @@ export default function ReleaseForm({
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">
-              {error}
-            </div>
+            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">{error}</div>
           )}
 
           <form onSubmit={handleSubmit}>
@@ -100,16 +95,14 @@ export default function ReleaseForm({
                 id="releaseAmount"
                 type="number"
                 value={releaseAmount}
-                onChange={(e) => setReleaseAmount(e.target.value)}
+                onChange={e => setReleaseAmount(e.target.value)}
                 className="w-full py-2 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="请输入释放数量"
                 min="1"
                 max={currentAllocation.amount}
                 disabled={loading}
               />
-              <p className="mt-1 text-xs text-gray-500">
-                释放数量不能超过当前占用量
-              </p>
+              <p className="mt-1 text-xs text-gray-500">释放数量不能超过当前占用量</p>
             </div>
 
             <div className="flex justify-end gap-3">
@@ -126,7 +119,9 @@ export default function ReleaseForm({
                 className="flex items-center gap-2 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-md transition duration-200"
                 disabled={loading}
               >
-                {loading ? '释放中...' : (
+                {loading ? (
+                  '释放中...'
+                ) : (
                   <>
                     <FiUnlock size={16} /> 释放
                   </>

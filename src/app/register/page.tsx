@@ -61,9 +61,7 @@ export default function RegisterPage() {
           <h2 className="text-2xl font-bold text-center mb-6">用户注册</h2>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">
-              {error}
-            </div>
+            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">{error}</div>
           )}
 
           <form onSubmit={handleSubmit}>
@@ -79,7 +77,7 @@ export default function RegisterPage() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="请输入邮箱"
                 />
@@ -98,7 +96,7 @@ export default function RegisterPage() {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   className="w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="请设置密码"
                 />
@@ -117,7 +115,7 @@ export default function RegisterPage() {
                   id="confirmPassword"
                   type="password"
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={e => setConfirmPassword(e.target.value)}
                   className="w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="请再次输入密码"
                 />
@@ -129,7 +127,9 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-200 flex items-center justify-center gap-2"
             >
-              {loading ? '注册中...' : (
+              {loading ? (
+                '注册中...'
+              ) : (
                 <>
                   <FiUserPlus /> 注册
                 </>
@@ -140,7 +140,10 @@ export default function RegisterPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               已有账号？{' '}
-              <Link href="/login" className="text-blue-500 hover:underline inline-flex items-center gap-1">
+              <Link
+                href="/login"
+                className="text-blue-500 hover:underline inline-flex items-center gap-1"
+              >
                 <FiLogIn className="inline" /> 立即登录
               </Link>
             </p>

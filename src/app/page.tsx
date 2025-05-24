@@ -4,8 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FiPlus, FiEdit2, FiTrash2, FiLock, FiUnlock,
-  FiAlertCircle, FiCheckCircle, FiUser
+  FiPlus,
+  FiEdit2,
+  FiTrash2,
+  FiLock,
+  FiUnlock,
+  FiAlertCircle,
+  FiCheckCircle,
+  FiUser,
 } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useResource } from '@/contexts/ResourceContext';
@@ -80,9 +86,7 @@ export default function HomePage() {
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center max-w-md mx-auto shadow-lg">
           <FiUser className="mx-auto mb-4 text-blue-500" size={48} />
           <h2 className="text-2xl font-bold text-gray-800 mb-3">欢迎使用 LockLock</h2>
-          <p className="text-gray-600 mb-6">
-            请登录或注册账号以开始管理和分配资源
-          </p>
+          <p className="text-gray-600 mb-6">请登录或注册账号以开始管理和分配资源</p>
           <div className="flex flex-col gap-3">
             <Link
               href="/login"
@@ -127,23 +131,23 @@ export default function HomePage() {
       {!loading && resources.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
           <h3 className="text-xl font-medium text-gray-700 mb-2">暂无资源</h3>
-          <p className="text-gray-500 mb-4">
-            点击&quot;添加资源&quot;按钮开始创建资源
-          </p>
+          <p className="text-gray-500 mb-4">点击&quot;添加资源&quot;按钮开始创建资源</p>
         </div>
       )}
 
       {resources.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence>
-            {resources.map((resource) => {
+            {resources.map(resource => {
               const userAllocation = findUserAllocation(resource.id);
               const isAllocated = !!userAllocation && userAllocation.amount > 0;
 
               // Calculate the percentage of used resources
               const usagePercentage = Math.min(
                 100,
-                Math.round(((resource.totalAmount - resource.remainingAmount) / resource.totalAmount) * 100)
+                Math.round(
+                  ((resource.totalAmount - resource.remainingAmount) / resource.totalAmount) * 100
+                )
               );
 
               return (
@@ -181,11 +185,16 @@ export default function HomePage() {
                         <span className="text-gray-600">
                           可用: {resource.remainingAmount} / {resource.totalAmount}
                         </span>
-                        <span className={resource.remainingAmount === 0 ? 'text-red-500' : 'text-green-500'}>
-                          {resource.remainingAmount === 0
-                            ? <FiAlertCircle className="inline mr-1" />
-                            : <FiCheckCircle className="inline mr-1" />
+                        <span
+                          className={
+                            resource.remainingAmount === 0 ? 'text-red-500' : 'text-green-500'
                           }
+                        >
+                          {resource.remainingAmount === 0 ? (
+                            <FiAlertCircle className="inline mr-1" />
+                          ) : (
+                            <FiCheckCircle className="inline mr-1" />
+                          )}
                           {resource.remainingAmount === 0 ? '已用尽' : '可用'}
                         </span>
                       </div>
@@ -202,7 +211,10 @@ export default function HomePage() {
                       {isAllocated ? (
                         <div className="flex items-center text-sm text-gray-600">
                           <span>
-                            您已占用: <span className="font-medium text-blue-600">{userAllocation.amount}</span>
+                            您已占用:{' '}
+                            <span className="font-medium text-blue-600">
+                              {userAllocation.amount}
+                            </span>
                           </span>
                         </div>
                       ) : (
@@ -241,10 +253,7 @@ export default function HomePage() {
 
       {/* Resource Modal */}
       {isResourceModalOpen && (
-        <ResourceForm
-          resource={editingResource}
-          onClose={handleCloseResourceModal}
-        />
+        <ResourceForm resource={editingResource} onClose={handleCloseResourceModal} />
       )}
 
       {/* Allocation Modal */}

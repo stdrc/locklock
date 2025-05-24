@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -26,6 +26,8 @@ body {
 }
 
 /* 确保所有可点击元素有正确的光标 */
-button, a, [role="button"] {
+button,
+a,
+[role='button'] {
   cursor: pointer;
 }

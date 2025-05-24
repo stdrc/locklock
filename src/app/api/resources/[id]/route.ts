@@ -1,14 +1,11 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import type { Session } from "next-auth";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/db';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import type { Session } from 'next-auth';
 
 // Get a single resource
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
     const resource = await prisma.resource.findUnique({
@@ -17,7 +14,7 @@ export async function GET(
     });
 
     if (!resource) {
-      return NextResponse.json({ error: "资源不存在" }, { status: 404 });
+      return NextResponse.json({ error: '资源不存在' }, { status: 404 });
     }
 
     // Calculate remaining amount
@@ -31,31 +28,30 @@ export async function GET(
       remainingAmount: resource.totalAmount - allocatedAmount,
     });
   } catch (error) {
-    console.error("获取资源错误:", error);
-    return NextResponse.json({ error: "获取资源时发生错误" }, { status: 500 });
+    console.error('获取资源错误:', error);
+    return NextResponse.json({ error: '获取资源时发生错误' }, { status: 500 });
   }
 }
 
 // Update a resource
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const session = await getServerSession(authOptions) as Session & {
-      user: { id: string; email?: string | null }
-    } | null;
+    const session = (await getServerSession(authOptions)) as
+      | (Session & {
+          user: { id: string; email?: string | null };
+        })
+      | null;
 
     if (!session || !session.user?.id) {
-      return NextResponse.json({ error: "未授权" }, { status: 401 });
+      return NextResponse.json({ error: '未授权' }, { status: 401 });
     }
 
     const { name, totalAmount } = await request.json();
 
     // Validate input
     if (!name || typeof totalAmount !== 'number' || totalAmount < 0) {
-      return NextResponse.json({ error: "无效的资源信息" }, { status: 400 });
+      return NextResponse.json({ error: '无效的资源信息' }, { status: 400 });
     }
 
     // Check if resource exists
@@ -65,7 +61,7 @@ export async function PUT(
     });
 
     if (!existingResource) {
-      return NextResponse.json({ error: "资源不存在" }, { status: 404 });
+      return NextResponse.json({ error: '资源不存在' }, { status: 404 });
     }
 
     // Calculate allocated amount
@@ -76,10 +72,7 @@ export async function PUT(
 
     // Ensure new total amount is not less than allocated amount
     if (totalAmount < allocatedAmount) {
-      return NextResponse.json(
-        { error: "新总量不能小于已分配量" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '新总量不能小于已分配量' }, { status: 400 });
     }
 
     const updatedResource = await prisma.resource.update({
@@ -89,24 +82,23 @@ export async function PUT(
 
     return NextResponse.json(updatedResource);
   } catch (error) {
-    console.error("更新资源错误:", error);
-    return NextResponse.json({ error: "更新资源时发生错误" }, { status: 500 });
+    console.error('更新资源错误:', error);
+    return NextResponse.json({ error: '更新资源时发生错误' }, { status: 500 });
   }
 }
 
 // Delete a resource
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const session = await getServerSession(authOptions) as Session & {
-      user: { id: string; email?: string | null }
-    } | null;
+    const session = (await getServerSession(authOptions)) as
+      | (Session & {
+          user: { id: string; email?: string | null };
+        })
+      | null;
 
     if (!session || !session.user?.id) {
-      return NextResponse.json({ error: "未授权" }, { status: 401 });
+      return NextResponse.json({ error: '未授权' }, { status: 401 });
     }
 
     // Check if resource exists
@@ -115,7 +107,7 @@ export async function DELETE(
     });
 
     if (!existingResource) {
-      return NextResponse.json({ error: "资源不存在" }, { status: 404 });
+      return NextResponse.json({ error: '资源不存在' }, { status: 404 });
     }
 
     // Delete the resource (will cascade delete allocations)
@@ -123,9 +115,9 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ message: "资源已删除" });
+    return NextResponse.json({ message: '资源已删除' });
   } catch (error) {
-    console.error("删除资源错误:", error);
-    return NextResponse.json({ error: "删除资源时发生错误" }, { status: 500 });
+    console.error('删除资源错误:', error);
+    return NextResponse.json({ error: '删除资源时发生错误' }, { status: 500 });
   }
 }

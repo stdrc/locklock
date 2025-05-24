@@ -65,9 +65,7 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
         <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-lg font-medium">
-            {isEditing ? '编辑资源' : '添加资源'}
-          </h3>
+          <h3 className="text-lg font-medium">{isEditing ? '编辑资源' : '添加资源'}</h3>
           <button
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
@@ -78,9 +76,7 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
 
         <form onSubmit={handleSubmit} className="p-4">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">
-              {error}
-            </div>
+            <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">{error}</div>
           )}
 
           <div className="mb-4">
@@ -91,7 +87,7 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
               id="name"
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               className="w-full py-2 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="请输入资源名称"
               disabled={loading}
@@ -106,7 +102,7 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
               id="totalAmount"
               type="number"
               value={totalAmount}
-              onChange={(e) => setTotalAmount(e.target.value)}
+              onChange={e => setTotalAmount(e.target.value)}
               className="w-full py-2 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="请输入资源总量"
               min="1"
@@ -128,7 +124,9 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
               className="flex items-center gap-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition duration-200"
               disabled={loading}
             >
-              {loading ? '保存中...' : (
+              {loading ? (
+                '保存中...'
+              ) : (
                 <>
                   <FiSave size={16} /> 保存
                 </>

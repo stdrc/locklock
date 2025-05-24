@@ -1,8 +1,8 @@
 {
-    "build": {
-        "env": {
-            "ENABLE_EXPERIMENTAL_COREPACK": "1"
-        }
-    },
-    "buildCommand": "npm run build && npm run prisma:migrate:deploy"
+  "build": {
+    "env": {
+      "ENABLE_EXPERIMENTAL_COREPACK": "1"
+    }
+  },
+  "buildCommand": "npm run build && npm run prisma:migrate:deploy"
 }
