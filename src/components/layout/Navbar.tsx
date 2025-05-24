@@ -7,7 +7,7 @@ import { FiBox, FiUser, FiLogOut } from 'react-icons/fi';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user, status, signOut } = useAuth();
+  const { status, signOut } = useAuth();
 
   const isActive = (path: string) => pathname === path;
 

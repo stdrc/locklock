@@ -4,27 +4,28 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FiPlus, FiEdit2, FiTrash2, FiLink, FiLock, FiUnlock,
+  FiPlus, FiEdit2, FiTrash2, FiLock, FiUnlock,
   FiAlertCircle, FiCheckCircle, FiUser
 } from 'react-icons/fi';
 import { useAuth } from '@/contexts/AuthContext';
 import { useResource } from '@/contexts/ResourceContext';
+import { Resource } from '@/types';
 import ResourceForm from '@/components/resources/ResourceForm';
 import AllocationForm from '@/components/resources/AllocationForm';
 import ReleaseForm from '@/components/resources/ReleaseForm';
 
 export default function HomePage() {
-  const { user, status } = useAuth();
+  const { status } = useAuth();
   const { resources, allocations, loading, deleteResource } = useResource();
 
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
   const [isAllocationModalOpen, setIsAllocationModalOpen] = useState(false);
   const [isReleaseModalOpen, setIsReleaseModalOpen] = useState(false);
-  const [editingResource, setEditingResource] = useState<any>(null);
-  const [allocatingResource, setAllocatingResource] = useState<any>(null);
-  const [releasingResource, setReleasingResource] = useState<any>(null);
+  const [editingResource, setEditingResource] = useState<Resource | null>(null);
+  const [allocatingResource, setAllocatingResource] = useState<Resource | null>(null);
+  const [releasingResource, setReleasingResource] = useState<Resource | null>(null);
 
-  const handleOpenResourceModal = (resource: any = null) => {
+  const handleOpenResourceModal = (resource: Resource | null = null) => {
     setEditingResource(resource);
     setIsResourceModalOpen(true);
   };
@@ -34,7 +35,7 @@ export default function HomePage() {
     setEditingResource(null);
   };
 
-  const handleOpenAllocationModal = (resource: any) => {
+  const handleOpenAllocationModal = (resource: Resource) => {
     setAllocatingResource(resource);
     setIsAllocationModalOpen(true);
   };
@@ -44,7 +45,7 @@ export default function HomePage() {
     setAllocatingResource(null);
   };
 
-  const handleOpenReleaseModal = (resource: any) => {
+  const handleOpenReleaseModal = (resource: Resource) => {
     setReleasingResource(resource);
     setIsReleaseModalOpen(true);
   };
@@ -66,7 +67,7 @@ export default function HomePage() {
 
   // Find user allocation for a specific resource
   const findUserAllocation = (resourceId: string) => {
-    return allocations.find(allocation => allocation.resourceId === resourceId);
+    return allocations.find(allocation => allocation.resourceId === resourceId) || null;
   };
 
   // Check if all authenticated
@@ -127,7 +128,7 @@ export default function HomePage() {
         <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
           <h3 className="text-xl font-medium text-gray-700 mb-2">暂无资源</h3>
           <p className="text-gray-500 mb-4">
-            点击"添加资源"按钮开始创建资源
+            点击&quot;添加资源&quot;按钮开始创建资源
           </p>
         </div>
       )}
@@ -256,11 +257,11 @@ export default function HomePage() {
       )}
 
       {/* Release Modal */}
-      {isReleaseModalOpen && releasingResource && (
+      {isReleaseModalOpen && releasingResource && findUserAllocation(releasingResource.id) && (
         <ReleaseForm
           resource={releasingResource}
           onClose={handleCloseReleaseModal}
-          currentAllocation={findUserAllocation(releasingResource.id)}
+          currentAllocation={findUserAllocation(releasingResource.id)!}
         />
       )}
     </div>

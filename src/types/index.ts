@@ -26,10 +26,22 @@ export interface Allocation {
 }
 
 // API 响应类型
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   message?: string;
+}
+
+export interface AuthSignInResponse {
+  success: boolean;
+  ok?: boolean;
+  error?: string;
+  url?: string;
+}
+
+export interface AuthCredentials {
+  email: string;
+  password: string;
 }
 
 // 表单 Props 类型
@@ -54,9 +66,9 @@ export interface ReleaseFormProps {
 export interface AuthContextType {
   user: User | null;
   status: 'loading' | 'authenticated' | 'unauthenticated';
-  signIn: (credentials: { email: string; password: string }) => Promise<any>;
+  signIn: (credentials: { email: string; password: string }) => Promise<AuthSignInResponse>;
   signOut: () => Promise<void>;
-  register: (credentials: { email: string; password: string }) => Promise<any>;
+  register: (credentials: { email: string; password: string }) => Promise<AuthSignInResponse>;
 }
 
 export interface ResourceContextType {

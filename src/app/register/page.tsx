@@ -12,60 +12,60 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { register } = useAuth();
   const router = useRouter();
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password || !confirmPassword) {
       setError('请填写所有字段');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('两次输入的密码不一致');
       return;
     }
-    
+
     if (password.length < 6) {
       setError('密码长度至少为6个字符');
       return;
     }
-    
+
     try {
       setLoading(true);
       setError('');
-      
+
       const result = await register({ email, password });
-      
+
       if (result?.error) {
         setError(result.error);
         return;
       }
-      
+
       router.push('/');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('注册错误:', error);
-      setError(error.message || '注册时发生错误');
+      setError(error instanceof Error ? error.message : '注册时发生错误');
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="max-w-md mx-auto mt-10">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="p-8">
           <h2 className="text-2xl font-bold text-center mb-6">用户注册</h2>
-          
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">
               {error}
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 mb-2" htmlFor="email">
@@ -85,7 +85,7 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
-            
+
             <div className="mb-4">
               <label className="block text-gray-700 mb-2" htmlFor="password">
                 密码
@@ -104,7 +104,7 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
-            
+
             <div className="mb-6">
               <label className="block text-gray-700 mb-2" htmlFor="confirmPassword">
                 确认密码
@@ -123,7 +123,7 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
-            
+
             <button
               type="submit"
               disabled={loading}
@@ -136,7 +136,7 @@ export default function RegisterPage() {
               )}
             </button>
           </form>
-          
+
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               已有账号？{' '}
@@ -149,4 +149,4 @@ export default function RegisterPage() {
       </div>
     </div>
   );
-} 
+}

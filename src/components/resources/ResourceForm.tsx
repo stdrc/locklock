@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { FiX, FiSave } from 'react-icons/fi';
 import { useResource } from '@/contexts/ResourceContext';
+import { Resource } from '@/types';
 
 interface ResourceFormProps {
-  resource: any;
+  resource: Resource | null;
   onClose: () => void;
 }
 
@@ -14,52 +15,52 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
   const [totalAmount, setTotalAmount] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { createResource, updateResource } = useResource();
-  
+
   const isEditing = !!resource;
-  
+
   useEffect(() => {
     if (resource) {
       setName(resource.name);
       setTotalAmount(resource.totalAmount.toString());
     }
   }, [resource]);
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !totalAmount) {
       setError('请填写所有字段');
       return;
     }
-    
+
     const amount = parseInt(totalAmount, 10);
-    
+
     if (isNaN(amount) || amount <= 0) {
       setError('资源数量必须是大于0的整数');
       return;
     }
-    
+
     try {
       setLoading(true);
       setError('');
-      
+
       if (isEditing) {
         await updateResource(resource.id, { name, totalAmount: amount });
       } else {
         await createResource({ name, totalAmount: amount });
       }
-      
+
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(isEditing ? '更新资源错误:' : '创建资源错误:', error);
-      setError(error.message || '操作失败');
+      setError(error instanceof Error ? error.message : '操作失败');
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
@@ -67,21 +68,21 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
           <h3 className="text-lg font-medium">
             {isEditing ? '编辑资源' : '添加资源'}
           </h3>
-          <button 
+          <button
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
           >
             <FiX size={20} />
           </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="p-4">
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-md text-sm">
               {error}
             </div>
           )}
-          
+
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="name">
               资源名称
@@ -96,7 +97,7 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
               disabled={loading}
             />
           </div>
-          
+
           <div className="mb-6">
             <label className="block text-gray-700 mb-2" htmlFor="totalAmount">
               资源总量
@@ -112,7 +113,7 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
               disabled={loading}
             />
           </div>
-          
+
           <div className="flex justify-end gap-3">
             <button
               type="button"
@@ -138,4 +139,4 @@ export default function ResourceForm({ resource, onClose }: ResourceFormProps) {
       </div>
     </div>
   );
-} 
+}

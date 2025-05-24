@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 
 interface Resource {
@@ -45,7 +45,7 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const { status } = useAuth();
 
-  const fetchResources = async () => {
+  const fetchResources = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch('/api/resources');
@@ -57,15 +57,15 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
       setResources(data);
       return data;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : '获取资源失败');
       console.error('获取资源错误:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchAllocations = async () => {
+  const fetchAllocations = useCallback(async () => {
     if (status !== 'authenticated') return;
 
     try {
@@ -79,13 +79,13 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
       setAllocations(data);
       return data;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : '获取分配信息失败');
       console.error('获取分配信息错误:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [status]);
 
   const createResource = async (data: { name: string; totalAmount: number }) => {
     try {
@@ -104,8 +104,9 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
       await fetchResources();
       return responseData;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '创建资源失败';
+      setError(errorMessage);
       console.error('创建资源错误:', error);
       throw error;
     } finally {
@@ -130,8 +131,9 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
       await fetchResources();
       return responseData;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '更新资源失败';
+      setError(errorMessage);
       console.error('更新资源错误:', error);
       throw error;
     } finally {
@@ -153,8 +155,9 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
       await fetchResources();
       await fetchAllocations();
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '删除资源失败';
+      setError(errorMessage);
       console.error('删除资源错误:', error);
       throw error;
     } finally {
@@ -180,8 +183,9 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
       await fetchResources();
       await fetchAllocations();
       return data;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '分配资源失败';
+      setError(errorMessage);
       console.error('分配资源错误:', error);
       throw error;
     } finally {
@@ -203,8 +207,9 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
       await fetchResources();
       await fetchAllocations();
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '释放资源失败';
+      setError(errorMessage);
       console.error('释放资源错误:', error);
       throw error;
     } finally {
@@ -214,13 +219,13 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchResources();
-  }, []);
+  }, [fetchResources]);
 
   useEffect(() => {
     if (status === 'authenticated') {
       fetchAllocations();
     }
-  }, [status]);
+  }, [status, fetchAllocations]);
 
   const value = {
     resources,
