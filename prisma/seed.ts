@@ -9,17 +9,6 @@ async function main() {
   await prisma.user.deleteMany({});
   await prisma.resource.deleteMany({});
 
-  // Create a default admin user
-  const hashedPassword = await bcrypt.hash('password123', 10);
-  const admin = await prisma.user.create({
-    data: {
-      email: 'admin@example.com',
-      password: hashedPassword,
-    },
-  });
-
-  console.log('已创建管理员用户:', admin);
-
   // Create some initial resources
   const resource1 = await prisma.resource.create({
     data: {
@@ -36,17 +25,6 @@ async function main() {
   });
 
   console.log('已创建资源:', [resource1, resource2]);
-
-  // Create initial allocations
-  const allocation = await prisma.allocation.create({
-    data: {
-      amount: 50,
-      userId: admin.id,
-      resourceId: resource1.id,
-    },
-  });
-
-  console.log('已创建分配:', allocation);
 }
 
 main()
