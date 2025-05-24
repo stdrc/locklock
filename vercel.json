@@ -4,6 +4,5 @@
             "ENABLE_EXPERIMENTAL_COREPACK": "1"
         }
     },
-    "installCommand": "npm run prisma:migrate:deploy",
-    "buildCommand": "npm run build"
+    "buildCommand": "npm run build && npm run prisma:migrate:deploy"
 }
