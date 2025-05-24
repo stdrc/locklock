@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Generated files
+src/generated/
+
+# Environment files
+.env*
+
+# Other
+*.log
+.DS_Store
