@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { NextAuthProvider } from '@/components/providers/NextAuthProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ResourceProvider } from '@/contexts/ResourceContext';
+import { ToastProvider } from '@/contexts/ToastContext';
 import Navbar from '@/components/layout/Navbar';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -22,19 +23,21 @@ export default function RootLayout({
     <html lang="zh">
       <body className={inter.className}>
         <NextAuthProvider>
-          <AuthProvider>
-            <ResourceProvider>
-              <div className="flex flex-col min-h-screen">
-                <Navbar />
-                <main className="flex-grow container mx-auto px-4 py-8">
-                  {children}
-                </main>
-                <footer className="py-4 text-center text-sm text-gray-500 bg-gray-50">
-                  LockLock &copy; {new Date().getFullYear()}
-                </footer>
-              </div>
-            </ResourceProvider>
-          </AuthProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <ResourceProvider>
+                <div className="flex flex-col min-h-screen">
+                  <Navbar />
+                  <main className="flex-grow container mx-auto px-4 py-8">
+                    {children}
+                  </main>
+                  <footer className="py-4 text-center text-sm text-gray-500 bg-gray-50">
+                    LockLock &copy; {new Date().getFullYear()}
+                  </footer>
+                </div>
+              </ResourceProvider>
+            </AuthProvider>
+          </ToastProvider>
         </NextAuthProvider>
       </body>
     </html>
