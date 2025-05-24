@@ -30,11 +30,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
 
       if (!res.ok) {
-        toastError(data.error || 'Registration failed');
-        return { success: false, error: data.error || 'Registration failed' };
+        toastError(data.error || '注册失败');
+        return { success: false, error: data.error || '注册失败' };
       }
 
-      toastSuccess('Account created successfully');
+      toastSuccess('账号创建成功');
 
       // Auto-login after successful registration
       const signInResult = await signIn('credentials', {
@@ -44,13 +44,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (signInResult?.error) {
-        toastWarning('Account created but login failed');
-        return { success: false, error: 'Account created but login failed' };
+        toastWarning('账号创建成功但登录失败');
+        return { success: false, error: '账号创建成功但登录失败' };
       }
 
       return { success: true };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Registration failed';
+      const errorMessage = error instanceof Error ? error.message : '注册失败';
       toastError(errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -65,14 +65,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (result?.error) {
-        toastError('Invalid credentials');
-        return { success: false, error: 'Invalid credentials' };
+        toastError('邮箱或密码错误');
+        return { success: false, error: '邮箱或密码错误' };
       }
 
-      toastSuccess('Signed in successfully');
+      toastSuccess('登录成功');
       return { success: true };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Sign in failed';
+      const errorMessage = error instanceof Error ? error.message : '登录失败';
       toastError(errorMessage);
       return { success: false, error: errorMessage };
     }
@@ -81,9 +81,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleSignOut = async (): Promise<void> => {
     try {
       await signOut({ redirect: false });
-      toastSuccess('Signed out successfully');
+      toastSuccess('退出登录成功');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Sign out failed';
+      const errorMessage = error instanceof Error ? error.message : '退出登录失败';
       toastError(errorMessage);
     }
   };
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth 必须在 AuthProvider 内使用');
   }
   return context;
 }

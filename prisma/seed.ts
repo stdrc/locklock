@@ -18,24 +18,24 @@ async function main() {
     },
   });
 
-  console.log('Created admin user:', admin);
+  console.log('已创建管理员用户:', admin);
 
   // Create some initial resources
   const resource1 = await prisma.resource.create({
     data: {
-      name: 'Sample Resource 1',
+      name: '示例资源 1',
       totalAmount: 100,
     },
   });
 
   const resource2 = await prisma.resource.create({
     data: {
-      name: 'Sample Resource 2',
+      name: '示例资源 2',
       totalAmount: 200,
     },
   });
 
-  console.log('Created resources:', [resource1, resource2]);
+  console.log('已创建资源:', [resource1, resource2]);
 
   // Create initial allocations
   const allocation = await prisma.allocation.create({
@@ -46,7 +46,7 @@ async function main() {
     },
   });
 
-  console.log('Created allocation:', allocation);
+  console.log('已创建分配:', allocation);
 }
 
 main()
@@ -56,4 +56,4 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
-  }); 
+  });

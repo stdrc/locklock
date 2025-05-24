@@ -50,11 +50,11 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       const res = await fetch('/api/resources');
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || '获取资源失败');
       }
-      
+
       setResources(data);
       return data;
     } catch (error: any) {
@@ -67,16 +67,16 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 
   const fetchAllocations = async () => {
     if (status !== 'authenticated') return;
-    
+
     try {
       setLoading(true);
       const res = await fetch('/api/allocations');
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || '获取分配信息失败');
       }
-      
+
       setAllocations(data);
       return data;
     } catch (error: any) {
@@ -95,13 +95,13 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       const responseData = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(responseData.error || '创建资源失败');
       }
-      
+
       await fetchResources();
       return responseData;
     } catch (error: any) {
@@ -121,13 +121,13 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
+
       const responseData = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(responseData.error || '更新资源失败');
       }
-      
+
       await fetchResources();
       return responseData;
     } catch (error: any) {
@@ -145,12 +145,12 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`/api/resources/${id}`, {
         method: 'DELETE',
       });
-      
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || '删除资源失败');
       }
-      
+
       await fetchResources();
       await fetchAllocations();
     } catch (error: any) {
@@ -170,13 +170,13 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ resourceId, amount }),
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || '分配资源失败');
       }
-      
+
       await fetchResources();
       await fetchAllocations();
       return data;
@@ -195,12 +195,12 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`/api/allocations?resourceId=${resourceId}`, {
         method: 'DELETE',
       });
-      
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || '释放资源失败');
       }
-      
+
       await fetchResources();
       await fetchAllocations();
     } catch (error: any) {
@@ -242,7 +242,7 @@ export function ResourceProvider({ children }: { children: ReactNode }) {
 export function useResource() {
   const context = useContext(ResourceContext);
   if (context === undefined) {
-    throw new Error('useResource must be used within a ResourceProvider');
+    throw new Error('useResource 必须在 ResourceProvider 内使用');
   }
   return context;
-} 
+}
